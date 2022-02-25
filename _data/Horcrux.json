@@ -9,32 +9,6 @@
       "2018"
     ],
     "dict": {
-      "2018": {
-        "name": "2018",
-        "type": "album",
-        "root": 1,
-        "parents": [
-          "2018"
-        ],
-        "items": {
-          "order": [
-            "Hokkaido December"
-          ],
-          "dict": {
-            "Hokkaido December": {
-              "name": "Hokkaido December",
-              "type": "album",
-              "root": 2,
-              "parents": [
-                "2018",
-                "Hokkaido December"
-              ],
-              "path": "./_data/albums/2018-Hokkaido December.json",
-              "no_sub_album": true
-            }
-          }
-        }
-      },
       "2019": {
         "name": "2019",
         "type": "album",
@@ -74,6 +48,32 @@
                   }
                 }
               }
+            }
+          }
+        }
+      },
+      "2018": {
+        "name": "2018",
+        "type": "album",
+        "root": 1,
+        "parents": [
+          "2018"
+        ],
+        "items": {
+          "order": [
+            "Hokkaido December"
+          ],
+          "dict": {
+            "Hokkaido December": {
+              "name": "Hokkaido December",
+              "type": "album",
+              "root": 2,
+              "parents": [
+                "2018",
+                "Hokkaido December"
+              ],
+              "path": "./_data/albums/2018-Hokkaido December.json",
+              "no_sub_album": true
             }
           }
         }
