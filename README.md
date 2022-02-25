@@ -1,94 +1,200 @@
-# Github Pages Gallery
-Host your photo/video gallery in Github pages easily using Thumbsup & Github Actions for free.
+# Horcrux
+Generate your own online photograph gallery easily.
 
-### Why this project?
-This project contains starter code for anyone who wants to deploy his/her photo/video galery on Github Pages,
-**Zero Coding Needed**. Since Github pages is a free hosting service offered by Github to host static pages, it
-offers a decent bandwidth. So it is a great choice for photographers to showcase their works. Github Actions is a CI & CD
-platform that offers unlimited builds for open source projects. Combining the power of GitHub pages with Github Actions is
-a zero dollar solution to get your gallery online.
+![demo](https://raw.githubusercontent.com/soyaine/horcrux/gh-pages/assets/imxie-demo.png)
 
-### How to use
-Follow the steps below to get your Gallery online. You will be using GitHub web interface to do everything.
-:wink: No frustrating CLIs:
-1. SignUp for a Github account and verify your email ID: https://github.com/join
-2. Click on the use this template button:
+## Features
+- Simple but beautiful UI.
+- Auto-watermark your photos.
+- Auto-generate thumbnails for better load speed.
+- Sort photos by time, modify as you like, and keep it when you add new photos.
+- Keep the order when you put new photos in.
+- Support multi-level albums.
+- Based on Jekyll and GitHub Pages.
 
-![template](https://user-images.githubusercontent.com/8397274/103133407-40d86f00-46d0-11eb-82f2-edb4a0a30333.png)
+## Demo
+Here is a live demo: [https://soyaine.github.io/horcrux/](https://soyaine.github.io/horcrux/)
 
-3. Type a Name for your new repository
-
-![name](https://user-images.githubusercontent.com/8397274/103133448-88f79180-46d0-11eb-87ee-8da7a7d63473.png)
-
-4. Edit [config.json](config.json) by clicking on the edit button in the newly created repository under your account:
-
+## Quick Start
+Fork this repo, or clone to your local.
+``` bash
+$ git clone git@github.com:soyaine/horcrux.git
 ```
-{
-  "input": "./gallery",
-  "output": "./build_output",
-  "title": "Photo Gallery", // Set your gallery title here
-  "sort-albums-by": "title",
-  "sort-media-by": "filename",
-  "download-photos": "copy",
-  "cleanup": true,
-  "theme": "cards", // Your theme
-  "theme-style": "./custom.css",
-  "footer": "Copyright Text", // Set your copyright text here
-  "usage-stats": false
-}
+Make sure you have installed Python3, check current python version.
+``` bash
+$ python3 -V
 ```
-You can chose from any of the theme below to set the value for theme key:
-* `mosaic` - https://thumbsup.github.io/demos/themes/mosaic/
-* `cards` - https://thumbsup.github.io/demos/themes/cards/
-* `classic` - https://thumbsup.github.io/demos/themes/classic/
-* `flow` - https://thumbsup.github.io/docs/4-themes/built-in/ (no demo available)
+- If your command `python` rather than `python3` point to Python3, please change the code in two command file, modify `python3 -m venv venv` to `python -m venv venv`.
+  ```bash
+  # setup.command / config.command
+  python -m venv venv 
+  ```
+- If version < 3 or error, install Python3, and then recheck.
+  ```
+  $ brew install python3
+  $ python3 -V
+  ```
+- If the check passes, next step.
 
-You can learn more about the configuration file here: https://thumbsup.github.io/docs/3-configuration/usage/. Click on the commit changes button below the page.
+Change the config in file `_config.yml`, **especially the name**, which will shown as the site header and the watermark text in your photos.
 
-5. Go to actions tab of your new repository, Wait till the Initial build completes. It will show you the following check mark:
-![actions](https://user-images.githubusercontent.com/8397274/103133265-7af54100-46cf-11eb-9cef-38fa122142aa.png)
-6. Click on the settings tab. Scroll down to GitHub pages section. Make sure that you have the **gh-pages** branch selected as the **Source** for the GitHub pages. Click on save button.
-7. You are all set with your new awesome gallery! Add Albums or photos to make it live.
+``` yml
+name: Horcrux
+instagram: your_ins_account_id
+```
 
-#### Demo Video
-[![demo](http://img.youtube.com/vi/uYh7b2V0pyA/0.jpg)](http://www.youtube.com/watch?v=uYh7b2V0pyA "Github Pages Gallery Demo")
+Remove all resources under `./photos/`, then create folder in it, the folder name will shown as headline of a group of photos. Copy some photos into it. 
+```bash
+photos
+├── 2019
+│    ├── Duo
+│    │   ├── 07.jpg
+│    │   ├── 08.jpg
+│    │   ├── 09.jpg
+│    └── Hey
+│        ├── 02.jpg
+│        └── 1.jpg
+└── Mey
+    ├── 02.jpg
+    └── 1.jpg
+```
+
+> **⚠️NOTE** 
+> 
+> Please always keep your own original photo files in other place, because the watermark will change the original one. 
+> 
+> When you first try this, just put several photos in, to see wheather you like the watermark effect or not.
+
+Double click the `setup.command`, the process is doing:
+- Generate thumbnails with the suffix of `.min.jpg`
+- Watermark original photos with `name` value set in `_config.yml`
+- Traverse all folders and files, generate a file `_data/config.json`
+
+Run and greet your gallery in locally by [Jekyll](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll).
+```
+$ jekyll serve --watch
+```
+
+Git push to the remote branch `gh-pages`, then it will be online. 🎉
+```
+$ git add .
+$ git commit -m "init gallery"
+$ git push -u origin gh-pages
+```
+
+## Make It Yours
+If you have run successfully locally, here are more details you can reform it. The following is the default settings of Horcrux, almost all config are set in `_config.yml`:
+
+### Headline and Instagram Link
+
+```yml
+name: Horcrux # Headline of the page, watermark text
+
+instagram: ins_id
+```
+
+- The value of `name` is both the website headline and the watermark text.
+- There is a text link to your Instagram page at the bottom of the page, just set it blank if you don't want.
+
+### Albums and photos process
+
+```yml
+# How to process the photos and albums to config
+process:
+  keep_order: True
+  nested_album:
+    separator: ' · '
+  album:
+    sort_by_time: True # False: sort by filename
+    order_by: create # other two value can be: access, modify
+    reverse: True
+  photo:
+    sort_by_time: False
+    order_by: modify
+    reverse: True
+    min_width: 600
+    watermark:
+      thumbnail: False
+      original: True
+      fontsize: 40
+      fontfamily: Eczar-Medium.ttf
+      rotate: 0
+```
+
+**`sort_by_time`, `order_by`, `reverse`:**
+
+- Sort the albums (folder under `photos`) by create time, from new to old.
+- Sort the photos by name.
+
+**`keep_order`:**
+- When you change the `order` value in JSON under `_data`, and add new photos or new albums, then double click `setup.command`, a new `config.json` file will be generated, all old order set manually will be retained.
+- If you just modify `order` without new photo added, you can just double click `config.command`, which will read all JSON files (Horcrux.json and others under albums folder), and regenerate the `config.json` file.
+
+**`separator`:**
+- If you created nested folders under the `photos` folder, Horcrux can handle it too.
+- The album which path in `./photos/2019/duo/`, its displayed title in page will be: **DUO** · 2019, spliced by `separator` ` · `.
 
 
-#### Adding a new album to gallery
-1. Go to the gallery folder of the forked repo.
-2. Click on Create a new file button.
-3. Type AlbumName/.gitkeep in the input box
-4. Click Commit Changes button at the bottom.
+**`watermark`:**
+- Watermark the original photos.
+- The text of the watermark is the value of `name`.
+- The position is in the middle of the bottom of the photo.
 
-![newfolder](https://media.giphy.com/media/455paOHOAWr4KWNOtg/giphy.gif)
+### Gallery Style
 
-#### Adding Medias
-1. Go to gallery folder. Open any albums if any.
-2. Click on Upload files button
-3. Select files. Once it finishes upload, click Commit Changes button.
+```yml
+frame_padding: 10px # the white gap between photo and outer border
 
-![selectmedia](https://media.giphy.com/media/2uIfenjYx5anbQOEAo/giphy.gif)
+# Widescreen
+column: 3 
+column_gap: 30px
+row_gap: 30px
 
-#### Finding your website URL
-If you had done all the above steps then your website will be live now. Please check Github Actions tab in your repository for the sttaus of the
-deployment.  Once it is done, Go to settings tab again and scroll down to the Github Pages section to find your public gallery URL.
+# Smallscreen
+small_screen:
+  column: 2
+  column_gap: 10px
+  row_gap: 10px
+```
 
-![url](https://user-images.githubusercontent.com/8397274/48008065-f639b880-e13e-11e8-9f8e-72d27ad7cc30.png)
+**`column`:**
+- In wide screen, photos divided into 3 columns.
+- In small screen, photos divided into 2 columns.
 
-## Limitations
-* Github Pages [terms of service](https://help.github.com/articles/github-terms-of-service/):
-> If your bandwidth usage significantly exceeds the average bandwidth usage (as determined solely by GitHub) of other GitHub customers, we reserve the right to immediately disable your account or throttle your file hosting until you can reduce your bandwidth consumption.
+**`frame_padding`, `column_gap`, `row_gap`:**
+- Each photo has a white square frame background. The white gap between photo and frame outer border is 10px.
+- In wide screen, the spacing between columns is 30px, the same for rows.
+- In small screen, the spacing between columns is 10px, the same for rows.
 
-* File size limit (100 MB) & Repo size limit (75 GB) & Upload limit(25MB): Github limits the maximum usable filesize as 100MB for all files. This is enough for most users. It also imposes a repo size limit of 75GB. If you add a file to a repository via a browser, the file can be no larger than 25 MB. Visit https://help.github.com/articles/what-is-my-disk-quota/ for more info.
+### Color Palette
 
+Most of the color palette is defined in `./sass/base.scss`, you can change them to your color.
 
-## Tools Used
-* [Github Actions](https://github.com/features/actions) For continuous deployment.
-* [Thumbsup](https://thumbsup.github.io/) for gallery static page generation.
-* [GithHub Pages](https://pages.github.com/) for hosting.
+```scss
+$background: #fafafa;
+$surface: #fff;
 
-### History
-* This project was using Travis CI Initially, Migrated to Github Actions for better speed and reliabilty. Travis stopped providing free unlimited builds for open source projects.
+$title: #5f5f5f;
+$subtitle: #868686;
+$text: #C8C8C8;
+$link: #98A3AA;
+```
 
-## Contributing
-Feel free to make any changes and submit a PR.
+- `$background`: whole page's background color
+- `$surface`: the color of photo square frame
+
+## Acknowledgments
+The idea of generating album JSON for using Jekyll and GitHub Pages is inspired by AndyZhang's [gallery](https://github.com/andyzg/gallery).
+
+Special thanks to my friend [Hugo <img src="https://avatars2.githubusercontent.com/u/11666634?s=460&v=4" width="20" height="20">](https://github.com/xcc3641), the photographs both in the mockup above and in the live demo were taken by him. In the beginning, I just wanted to write a tool for him to share photography. Later I found it can be open-sourced. So there is Horcrux, he named it.
+
+## Author
+© [Soyaine](https://github.com/soyaine)
+
+## Support
+If you have any question about Horcrux, feel free to start an [issue](https://github.com/soyaine/horcrux/issues/new). 
+
+You can also reach out to me by email [soyaine1@gmail.com](mailto:soyaine1@gmail.com)
+
+## License
+MIT
